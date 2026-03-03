@@ -1,30 +1,48 @@
 import de.bezier.guido.*;
-//Declare and initialize constants NUM_ROWS and NUM_COLS = 20
+private int NUM_ROWS = 20;
+private int NUM_COLS = 20;
 private MSButton[][] buttons; //2d array of minesweeper buttons
-private ArrayList <MSButton> mines; //ArrayList of just the minesweeper buttons that are mined
+private ArrayList <MSButton> mines = new ArrayList <MSButton>();
 
 void setup ()
 {
-    size(400, 400);
+    size(400, 500);
     textAlign(CENTER,CENTER);
-    
+    stroke(134,57,53);
     // make the manager
     Interactive.make( this );
-    
     //your code to initialize buttons goes here
-    
+    MSButton [][] buttons = new MSButton[NUM_ROWS][NUM_COLS];
+    for (int i = 0; i<buttons.length;i++){
+     for (int j = 0; j<buttons[i].length;j++) {
+        buttons[i][j] = new MSButton(i,j);
+     }
+    }
     
     
     setMines();
 }
 public void setMines()
 {
-    //your code
+   int row; 
+   int col; 
+   
+   for(int i = 0; i< 10; i++) {
+     row = (int)(Math.random()*NUM_ROWS);
+     col =(int)(Math.random()*NUM_COLS);
+   
+     if(!mines.contains(row) && !mines.contains(col)) {
+      mines.add(new MSButton(row,col));
+   }
+   }
+  
 }
 
 public void draw ()
 {
-    background( 0 );
+    background(245,221,220);
+    fill(173,115,113);
+    text("Mines left: "+String.valueOf(countMines(NUM_ROWS,NUM_COLS)), 200, 450); 
     if(isWon() == true)
         displayWinningMessage();
 }
@@ -52,6 +70,11 @@ public int countMines(int row, int col)
     //your code here
     return numMines;
 }
+
+
+
+
+
 public class MSButton
 {
     private int myRow, myCol;
@@ -61,8 +84,8 @@ public class MSButton
     
     public MSButton ( int row, int col )
     {
-        // width = 400/NUM_COLS;
-        // height = 400/NUM_ROWS;
+        width = 400/NUM_COLS;
+        height = 400/NUM_ROWS;
         myRow = row;
         myCol = col; 
         x = myCol*width;
@@ -81,13 +104,13 @@ public class MSButton
     public void draw () 
     {    
         if (flagged)
-            fill(0);
-        // else if( clicked && mines.contains(this) ) 
-        //     fill(255,0,0);
+            fill(188,123,70);
+        else if( clicked && mines.contains(this) ) 
+             fill(170,52,48);
         else if(clicked)
-            fill( 200 );
+            fill( 203,162,136 );
         else 
-            fill( 100 );
+            fill( 198,179,166 );
 
         rect(x, y, width, height);
         fill(0);
