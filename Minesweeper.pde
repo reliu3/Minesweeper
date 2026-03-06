@@ -123,8 +123,7 @@ public void draw ()
     rect(0,300,400,40);
     stroke(134,57,53);
     fill(173,115,113);
-    flagsText = Integer.toString(flags);
-    text("Flags Left: " + flagsText, 150, 330);
+    text("Flags Left: " + flags, 150, 330);
     if(flags <= 0) {
       noStroke();
       fill(245,221,220);
