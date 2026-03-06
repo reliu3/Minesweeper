@@ -5,6 +5,7 @@ private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList <MSButton>();
 private int nmines; 
 public int flags;
+public String flagsText;
 private int numClicked;
 private boolean initialized;
 private boolean canWin = true;
@@ -116,12 +117,15 @@ public void setMines()
 public void draw ()
 {
   if(initialized == true) {
+    
     noStroke();
     fill(245,221,220);
     rect(0,300,400,40);
     stroke(134,57,53);
     fill(173,115,113);
-    text("Flags Left: " + Integer.toString(flags), 150, 330);
+    flagsText = String.valueOf(flags);
+    System.out.println(flagsText);
+    text("Flags Left: " + flagsText, 150, 330);
     if(flags <= 0) {
       noStroke();
       fill(245,221,220);
