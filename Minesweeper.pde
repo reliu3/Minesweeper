@@ -4,7 +4,7 @@ private int NUM_COLS;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList <MSButton>();
 private int nmines; 
-private int flags;
+public int flags;
 private int numClicked;
 private boolean initialized;
 private boolean canWin = true;
