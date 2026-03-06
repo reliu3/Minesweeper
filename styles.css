@@ -11,6 +11,10 @@ body {
     margin-right: auto
 }
 
+p {
+    font-size: 12px;
+	font-style: oblique;
+}
 header {
 	
 }
