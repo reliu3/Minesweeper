@@ -39,8 +39,7 @@ public void mouseClicked() {
       numClicked++;
       initializeMines();
       setMines();
-      fill(173,115,113);
-      //text("Mines left: "+String.valueOf(, 150, 350); 
+ 
     } else if(mouseX>=120&&mouseX<=180&&mouseY>=200&&mouseY<=220) {
       NUM_ROWS = 15;
       NUM_COLS = 15;
@@ -49,8 +48,7 @@ public void mouseClicked() {
       numClicked++;
       initializeMines();
       setMines();
-      fill(173,115,113);
-      //text("Mines left: "+String.valueOf(, 150, 350);
+  
     } else if(mouseX>=220&&mouseX<=280&&mouseY>=200&&mouseY<=220) {
       NUM_ROWS = 20;
       NUM_COLS = 20;
@@ -123,7 +121,7 @@ public void draw ()
     rect(0,300,400,40);
     stroke(134,57,53);
     fill(173,115,113);
-    text("Flags Left: " + String.valueOf(flags), 150, 330);
+    text("Flags Left: " + Integer.toString(flags), 150, 330);
     if(flags <= 0) {
       noStroke();
       fill(245,221,220);
@@ -284,13 +282,13 @@ public class MSButton
     public void draw () 
     {    
         if (flagged)
-            fill(188,123,70);
+            fill(250,145,141);
         else if( clicked && mines.contains(this) ) 
-             fill(170,52,48);
+             fill(165,92,90);
         else if(clicked)
-            fill( 203,162,136 );
+            fill( 234,212,211 );
         else 
-            fill( 198,179,166 );
+            fill( 206,176,175 );
 
         rect(x, y, width, height);
         fill(134,57,53);  
