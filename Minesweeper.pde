@@ -4,28 +4,38 @@ private int NUM_COLS;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList <MSButton>();
 private int nmines; 
+private int flags;
 private int numClicked;
+private boolean initialized;
+private boolean canWin = true;
+private boolean canClick = true;
+private PFont font;
 
 void setup ()
 {
     background(245,221,220);
     size(300, 400);
+    font = createFont("UD デジタル 教科書体 N", 12);
+    textFont(font);
     textAlign(CENTER,CENTER);
     stroke(134,57,53);
     // make the manager
     Interactive.make( this );
     //your code to initialize buttons goes here
     levelButtons();
+    //String[] fontList = PFont.list();
+    //printArray(fontList);
     
 }
 
 public void mouseClicked() {
   if(numClicked != 1) {
     textAlign(CENTER,CENTER);
-    if(mouseX>=20&&mouseX<=80&&mouseY>=200&&mouseY<=220) {
+    if(mouseX>=(width/7)&&mouseX<=(2*width/7)&&mouseY>=((height/2)-8)&&mouseY<=((height/2)+28)) {
       NUM_ROWS = 10;
       NUM_COLS = 10;
       nmines = 5;
+      flags = nmines;
       numClicked++;
       initializeMines();
       setMines();
@@ -35,6 +45,7 @@ public void mouseClicked() {
       NUM_ROWS = 15;
       NUM_COLS = 15;
       nmines = 10;
+      flags = nmines;
       numClicked++;
       initializeMines();
       setMines();
@@ -44,13 +55,19 @@ public void mouseClicked() {
       NUM_ROWS = 20;
       NUM_COLS = 20;
       nmines = 15;
+      flags = nmines;
       numClicked++;
       initializeMines();
       setMines();
       fill(173,115,113);
-      //text("Mines left: "+String.valueOf(, 150, 350);
+      
     } else {
-      text("please choose a level", 150,250); 
+      noStroke();
+      fill(245,221,220);
+      rect(-1,225,400,200);
+      stroke(134,57,53);
+      fill(173,115,113);
+      text("please choose a level", width/2,250); 
     }
   } 
   
@@ -62,7 +79,9 @@ public void initializeMines() {
         buttons[i][j] = new MSButton(i,j);
      }
     }
+    initialized = true;
 }
+
 
 public void levelButtons() {
     textAlign(CENTER,CENTER);
@@ -71,6 +90,10 @@ public void levelButtons() {
     rect(120,200,60,20);
     rect(220,200,60,20);
     fill(170,118,118);
+    textSize(24);
+    text("Choose a Difficulty", width/2, height/4); 
+    textSize(12);
+
     text("Level 1", 50, 210);
     text("Level 2", 150, 210);
     text("Level 3", 250, 210);
@@ -94,22 +117,69 @@ public void setMines()
 
 public void draw ()
 {
-    if(isWon() == true)
-        displayWinningMessage();
+  if(initialized == true) {
+    noStroke();
+    fill(245,221,220);
+    rect(0,300,400,40);
+    stroke(134,57,53);
+    fill(173,115,113);
+    text("Flags Left: " + String.valueOf(flags), 150, 330);
+    if(flags <= 0) {
+      noStroke();
+      fill(245,221,220);
+      rect(0,340,400,50);
+      stroke(134,57,53);
+      fill(173,115,113);
+      text("No Flags Remaining", 150, 350);
+      text("Left-Click on flagged tiles to Unflag", 150, 365);
+    }
+    if(isWon() == true && canWin == true){
+       noStroke();
+       fill(245,221,220);
+       rect(0,300,400,200);
+       stroke(134,57,53);
+       displayWinningMessage();
+    }
+  }
 }
 public boolean isWon()
 {
-    //your code here
-    return false;
+  int count = 0;  
+  for(int i = 0; i<buttons.length; i++){
+      for(int j = 0; j<buttons[i].length; j++) {
+        if(buttons[i][j].clicked == true && !mines.contains(buttons[i][j])) {
+          count++;
+        }
+      }
+    }
+    if(count == ((NUM_ROWS*NUM_COLS)-nmines)) {
+      return true;
+    }else {
+      return false;
+    }
 }
 public void displayLosingMessage()
 {
+  
+  
+  for(int i = 0; i<buttons.length; i++) {
+    for(int j = 0; j<buttons[i].length; j++) {
+      if(buttons[i][j].clicked == false) {
+        buttons[i][j].clicked = true;  
+      }
+    }
+  }
+  canWin = false;
   fill(173,115,113);  
-  text("Game Over, Reload to Play Again", 150, 350);
+  textAlign(CENTER,CENTER);
+  text("Game Over, Reload to Play Again", width/2, 350);
 }
 public void displayWinningMessage()
 {
-    //your code here
+  fill(173,115,113);  
+  textAlign(CENTER,CENTER);
+  text("You've uncovered all unmined land", width/2, 345);
+  text("To play again, reload the page", width/2, 355); 
 }
 
 public boolean isValid(int r, int c)
@@ -161,35 +231,52 @@ public class MSButton
     // called by manager
     public void mousePressed () 
     {
-        clicked = true;
-        if(mousePressed && mouseButton == RIGHT) {
-          if(flagged == true) {
-           flagged = false;
-           clicked = false;
-          } else if(flagged == false) {
-            flagged = true;
-          } 
-        } else if(mines.contains(this)) {
-            displayLosingMessage();
-        } else if(countMines(this.myRow,this.myCol)>0) {
-            setLabel(countMines(this.myRow,this.myCol));
-        } else {
-          if(isValid(this.myRow,this.myCol-1)&&buttons[this.myRow][this.myCol-1].clicked == false) {
-            buttons[this.myRow][this.myCol-1].mousePressed();
-          } if(isValid(this.myRow,this.myCol+1)&&buttons[this.myRow][this.myCol+1].clicked == false) {
-            buttons[this.myRow][this.myCol+1].mousePressed();
-          }if(isValid(this.myRow-1,this.myCol-1)&&buttons[this.myRow-1][this.myCol-1].clicked == false) {
-            buttons[this.myRow-1][this.myCol-1].mousePressed();
-          } if(isValid(this.myRow-1,this.myCol+1)&&buttons[this.myRow-1][this.myCol+1].clicked == false) {
-            buttons[this.myRow-1][this.myCol+1].mousePressed();
-          }if(isValid(this.myRow-1,this.myCol)&&buttons[this.myRow-1][this.myCol].clicked == false) {
-            buttons[this.myRow-1][this.myCol].mousePressed();
-          } if(isValid(this.myRow+1,this.myCol)&&buttons[this.myRow+1][this.myCol].clicked == false) {
-            buttons[this.myRow+1][this.myCol].mousePressed();
-          } if(isValid(this.myRow+1,this.myCol-1)&&buttons[this.myRow+1][this.myCol-1].clicked == false) {
-            buttons[this.myRow+1][this.myCol-1].mousePressed();
-          } if(isValid(this.myRow+1,this.myCol+1)&&buttons[this.myRow+1][this.myCol+1].clicked == false) {
-            buttons[this.myRow+1][this.myCol+1].mousePressed();
+        if(canClick == true) {
+          if(mousePressed && mouseButton == LEFT) {
+            clicked = true;
+          }
+          if(mousePressed && mouseButton == RIGHT&&flags>0) {
+            if(flagged == true) {
+             flagged = false;
+             flags++;
+             clicked = false;
+            } else if(flagged == false) {
+              flagged = true;
+              flags--;
+            } 
+          } else if(mousePressed && mouseButton == RIGHT && flags<=0) { 
+            if(flagged == true) {
+             flagged = false;
+             flags++;
+             clicked = false;
+             noStroke();
+             fill(245,221,220);
+             rect(0,300,400,200);
+             stroke(173,115,113);
+            } 
+          }else if(mines.contains(this)) {
+              displayLosingMessage();
+              canClick = false;
+          } else if(countMines(this.myRow,this.myCol)>0) {
+              setLabel(countMines(this.myRow,this.myCol));
+          } else {
+            if(isValid(this.myRow,this.myCol-1)&&buttons[this.myRow][this.myCol-1].clicked == false) {
+              buttons[this.myRow][this.myCol-1].mousePressed();
+            } if(isValid(this.myRow,this.myCol+1)&&buttons[this.myRow][this.myCol+1].clicked == false) {
+              buttons[this.myRow][this.myCol+1].mousePressed();
+            }if(isValid(this.myRow-1,this.myCol-1)&&buttons[this.myRow-1][this.myCol-1].clicked == false) {
+              buttons[this.myRow-1][this.myCol-1].mousePressed();
+            } if(isValid(this.myRow-1,this.myCol+1)&&buttons[this.myRow-1][this.myCol+1].clicked == false) {
+              buttons[this.myRow-1][this.myCol+1].mousePressed();
+            }if(isValid(this.myRow-1,this.myCol)&&buttons[this.myRow-1][this.myCol].clicked == false) {
+              buttons[this.myRow-1][this.myCol].mousePressed();
+            } if(isValid(this.myRow+1,this.myCol)&&buttons[this.myRow+1][this.myCol].clicked == false) {
+              buttons[this.myRow+1][this.myCol].mousePressed();
+            } if(isValid(this.myRow+1,this.myCol-1)&&buttons[this.myRow+1][this.myCol-1].clicked == false) {
+              buttons[this.myRow+1][this.myCol-1].mousePressed();
+            } if(isValid(this.myRow+1,this.myCol+1)&&buttons[this.myRow+1][this.myCol+1].clicked == false) {
+              buttons[this.myRow+1][this.myCol+1].mousePressed();
+            }
           }
         }
         
@@ -206,7 +293,7 @@ public class MSButton
             fill( 198,179,166 );
 
         rect(x, y, width, height);
-        fill(0);
+        fill(134,57,53);  
         text(myLabel,x+width/2,y+height/2);
     }
     public void setLabel(String newLabel)
